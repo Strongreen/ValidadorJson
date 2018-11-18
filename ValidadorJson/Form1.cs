@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,8 +22,10 @@ namespace ValidadorJson
             InitializeComponent();
         }
 
+
         private void button1_Click(object sender, EventArgs e)
         {
+
             textBox2.Text = "";
 
             var jsonRecebido = textBox1.Text;
@@ -43,24 +46,52 @@ namespace ValidadorJson
 
             ////////////
 
-            var schema = JSchema.Parse(@"{
+            JSchema schema = JSchema.Parse(@"{
                                             'type': 'object',
                                             'properties': {
-                                                'idExterno': {'type':'string'},
-                                                'ambienteEmissao': {'type':'string'},
-                                                'enviarPorEmail': {'type':'boolean'},
+                                                'idExterno': { 'type':'string'},
+                                                'ambienteEmissao': { 'type':'string'},
+                                                'enviarPorEmail': {'type': [ 'boolean', 'null' ]},
                                                 'cliente': {
                                                     'type': 'object',
                                                     'properties': {
-                                                        'nome': {'type':'string'},
+                                                        'nome': { 'type':'string'},
+                                                        'tipoPessoa': {'type':'string'},
+                                                        'email': {'type':[ 'string', 'null' ]},
+                                                        'cpfCnpj': {'type':'string'},
+                                                        'inscricaoMunicipal': {'type':'string'},
+                                                        'inscricaoEstadual': {'type':'string'},
+                                                        'telefone': {'type':'string'},
                                                         'endereco': {
                                                             'type': 'object',
-                                                            'logradouro': {'type':'string'}
-                                                        }
+                                                            'pais': {'type':'string'},
+                                                            'logradouro': {'type':'string'},
+                                                            'uf': {'type':'string'},
+                                                            'cidade': {'type':'string'},
+                                                            'numero': {'type':'string'},
+                                                            'complemento': {'type':'string'},
+                                                            'bairro': {'type':'string'},
+                                                            'cep': {'type':'string'}
+                                                           },
+                                                        },
+                                                    'required': ['nome'],
+                                                    'servico': {
+                                                        'type': 'object',
+                                                        'properties': {
+                                                            'descricao': {'type':'string'},
+                                                            'aliquotaIss': {'type':'float'},
+                                                            'codigoInternoServicoMunicipal': {'type':'integer'},
+                                                            'issRetidoFonte': {'type':'boolean'},
+                                                            'valorCofins': {'type':'float'},
+                                                            'valorCsll': {'type':'float'},
+                                                            'valorInss': {'type':'float'},
+                                                            'valorIr': {'type':'float'},
+                                                            'valorPis': {'type':'float'}
+                                                          }
                                                     },
-                                                    'required': ['nome']
-                                                }
-                                            },
+                                                   'valorTotal': {'type':'float'},
+                                                 }
+                                             },
                                             'required': ['idExterno', 'ambienteEmissao']
                                         }");
 
@@ -71,11 +102,14 @@ namespace ValidadorJson
 
             if (valid)
             {
+                string formatted = JsonFormatting.Ident(jsonRecebido);
                 textBox2.Text = "JSON Válido";
+                textBox1.Text = formatted.ToString();
             }
             else
             {
                 var strBuilder = new StringBuilder();
+
                 foreach (var error in errors)
                 {
                     if (error.ErrorType == ErrorType.Type)
@@ -83,7 +117,7 @@ namespace ValidadorJson
                         strBuilder.AppendLine(string.Format("Erro no campo {0} esperando {1} e veio {2} na linha {3} na coluna {4}",
                             error.Path,
                             error.Schema.Type.Value.ToString(),
-                            error.Value.GetType().ToString(),
+                            error.Value != null ? error.Value.GetType().ToString() : "null",
                             error.LineNumber,
                             error.LinePosition));
                     }
@@ -107,10 +141,6 @@ namespace ValidadorJson
 
 
 
-
-
-
-
             //var y = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(x);
 
             //foreach (var item in y)
@@ -126,16 +156,20 @@ namespace ValidadorJson
             //}
 
         }
-
-
-        class Herika
+        public class JsonFormatting
         {
-            public string nome { get; set; }
-
-            public override string ToString()
+            public static string Ident(string jsonRecebido)
             {
-                return base.ToString();
+                using (var sr = new StringReader(jsonRecebido))
+                using (var sw = new StringWriter())
+                {
+                    var jr = new JsonTextReader(sr);
+                    var jw = new JsonTextWriter(sw) { Formatting = Formatting.Indented };
+                    jw.WriteToken(jr);
+                    return sw.ToString();
+                }
             }
         }
-    }
+
+      }
 }
