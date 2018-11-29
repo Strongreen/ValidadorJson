@@ -31,6 +31,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.textBox2 = new System.Windows.Forms.TextBox();
+            this.SelecioneNF = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // textBox1
@@ -43,11 +44,11 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(362, 323);
+            this.button1.Location = new System.Drawing.Point(323, 323);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(114, 23);
             this.button1.TabIndex = 1;
-            this.button1.Text = "button1";
+            this.button1.Text = "Formatar e Validar";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -59,11 +60,26 @@
             this.textBox2.Size = new System.Drawing.Size(427, 305);
             this.textBox2.TabIndex = 2;
             // 
+            // SelecioneNF
+            // 
+            this.SelecioneNF.BackColor = System.Drawing.SystemColors.Window;
+            this.SelecioneNF.FormattingEnabled = true;
+            this.SelecioneNF.Items.AddRange(new object[] {
+            "NF-e",
+            "NFS-e",
+            "NFC-e"});
+            this.SelecioneNF.Location = new System.Drawing.Point(777, 323);
+            this.SelecioneNF.Name = "SelecioneNF";
+            this.SelecioneNF.Size = new System.Drawing.Size(121, 21);
+            this.SelecioneNF.TabIndex = 3;
+            this.SelecioneNF.SelectedIndexChanged += new System.EventHandler(this.SelecioneNF_SelectedIndexChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(937, 450);
+            this.Controls.Add(this.SelecioneNF);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
@@ -79,6 +95,7 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.ComboBox SelecioneNF;
     }
 }
 
